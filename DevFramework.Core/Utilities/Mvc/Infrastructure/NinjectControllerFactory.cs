@@ -1,0 +1,24 @@
+﻿using Ninject;
+using Ninject.Modules;
+using System;
+using System.ServiceModel.Channels;
+using System.Web.Mvc;
+using System.Web.Routing;
+using RequestContext = System.Web.Routing.RequestContext;
+
+namespace DevFramework.Core.Utilities.Mvc.Infrastructure
+{
+    public class NinjectControllerFactory :DefaultControllerFactory
+    {
+        private IKernel _kernel; //ninject paketini yükleyin
+
+        public NinjectControllerFactory(params INinjectModule[] modules)
+        {
+            _kernel = new StandardKernel(modules);
+        }
+       protected override IController GetControllerInstance(RequestContext requestContext, Type controllerType) //gerekli usingleri ekleyin
+        {
+            return controllerType == null ? null : (IController)_kernel.Get(controllerType);
+        }
+    }
+}
